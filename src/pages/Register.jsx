@@ -1,8 +1,12 @@
+import Header from "../components/layout/Header";
+import RegisterForm from "../components/layout/RegisterForm";
+
 function Register() {
   return (
-    <div>
-      <h2>Register</h2>
-    </div>
+    <>
+      <Header />
+      <RegisterForm />
+    </>
   );
 }
 
