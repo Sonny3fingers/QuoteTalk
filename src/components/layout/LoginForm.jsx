@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 
 function LoginForm() {
   const [formData, setFormData] = useState({
@@ -16,10 +17,30 @@ function LoginForm() {
       [e.target.id]: e.target.value,
     }));
   };
+
+  const onSubmitHandler = async (e) => {
+    e.preventDefault();
+
+    try {
+      const auth = getAuth();
+
+      const userCredential = await signInWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+
+      if (userCredential.user) {
+        navigate("/chat");
+      }
+    } catch (error) {
+      alert(error);
+    }
+  };
   return (
     <main className="w-full shadow px-2 py-5 bg-white">
       <h2 className="text-2xl font-normal text-gray-800">Log In</h2>
-      <form className="mb-8">
+      <form className="mb-8" onSubmit={onSubmitHandler}>
         <div className="py-4">
           <input
             className="w-full p-2 rounded-sm border-2"
