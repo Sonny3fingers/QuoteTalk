@@ -1,6 +1,8 @@
 import React, { useState } from "react";
+import { toast } from "react-toastify";
 import { useNavigate, Link } from "react-router-dom";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import Button from "../Button";
 
 function LoginForm() {
   const [formData, setFormData] = useState({
@@ -31,10 +33,10 @@ function LoginForm() {
       );
 
       if (userCredential.user) {
-        navigate("/chat");
+        navigate("/profile");
       }
     } catch (error) {
-      alert(error);
+      toast.error("Bad User Credentials");
     }
   };
   return (
@@ -61,9 +63,7 @@ function LoginForm() {
             onChange={onChangeHandler}
           />
         </div>
-        <button className="bg-teal-500 px-4 py-1 border-0 rounded-full text-xl text-white transition-all hover:bg-teal-700">
-          Submit
-        </button>
+        <Button>Submit</Button>
       </form>
       <Link className="mt-8 text-xl text-orange-400 font-bold" to="/register">
         Register Instead

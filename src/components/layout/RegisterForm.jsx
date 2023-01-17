@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { toast } from "react-toastify";
 import { useNavigate, Link } from "react-router-dom";
 import {
   getAuth,
@@ -7,6 +8,7 @@ import {
 } from "firebase/auth";
 import { collection, addDoc } from "firebase/firestore";
 import { db } from "../../firebase.config";
+import Button from "../Button";
 
 function RegisterForm() {
   const [formData, setFormData] = useState({
@@ -49,9 +51,9 @@ function RegisterForm() {
       await addDoc(collection(db, "users"), formDataCopy);
 
       // redirect, navigate to chat page
-      navigate("/chat");
+      navigate("/profile");
     } catch (error) {
-      console.log(error);
+      toast.error("Something went wrong with registration.");
     }
   };
 
@@ -89,12 +91,7 @@ function RegisterForm() {
             onChange={onChangeHandler}
           />
         </div>
-        <button
-          type="submit"
-          className="bg-teal-500 px-4 py-1 border-0 border-black rounded-full text-xl text-white transition-all hover:bg-teal-700 "
-        >
-          Submit
-        </button>
+        <Button>Submit</Button>
       </form>
       <Link className="mt-8 text-xl text-orange-400 font-bold" to="/">
         Log In Instead
