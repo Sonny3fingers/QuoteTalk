@@ -6,7 +6,7 @@ import {
   createUserWithEmailAndPassword,
   updateProfile,
 } from "firebase/auth";
-import { collection, addDoc } from "firebase/firestore";
+import { collection, setDoc, doc } from "firebase/firestore";
 import { db } from "../../firebase.config";
 import Button from "../Button";
 
@@ -48,7 +48,7 @@ function RegisterForm() {
 
       const formDataCopy = { ...formData };
       delete formDataCopy.password;
-      await addDoc(collection(db, "users"), formDataCopy);
+      await setDoc(doc(db, "users", user.uid), formDataCopy);
 
       // redirect, navigate to chat page
       navigate("/profile");

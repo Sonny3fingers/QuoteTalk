@@ -37,10 +37,10 @@ function Profile() {
         });
 
         // Update in firestore
-        // const userReference = doc(db, "users", auth.currentUser.uid);
-        // await updateDoc(userReference, {
-        //   name: name,
-        // });
+        const userReference = doc(db, "users", auth.currentUser.uid);
+        await updateDoc(userReference, {
+          name: name,
+        });
       }
     } catch (error) {
       toast.error("Could not update profile details.");
@@ -53,6 +53,10 @@ function Profile() {
       ...prevState,
       [e.target.id]: e.target.value,
     }));
+  };
+
+  const cancelInputHandler = () => {
+    setChangeDetails((prevState) => !prevState);
   };
 
   return (
@@ -82,6 +86,14 @@ function Profile() {
             >
               {changeDetails ? "Done" : "Change"}
             </span>
+            {changeDetails && (
+              <span
+                className="text-sm text-orange-400 font-bold hover:text-orange-500 cursor-pointer"
+                onClick={cancelInputHandler}
+              >
+                Cancel
+              </span>
+            )}
           </div>
           <input
             type="text"
