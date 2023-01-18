@@ -6,9 +6,10 @@ import {
   createUserWithEmailAndPassword,
   updateProfile,
 } from "firebase/auth";
-import { collection, setDoc, doc } from "firebase/firestore";
+import { setDoc, doc } from "firebase/firestore";
 import { db } from "../../firebase.config";
 import Button from "../Button";
+import OAuth from "../OAuth";
 
 function RegisterForm() {
   const [formData, setFormData] = useState({
@@ -60,7 +61,7 @@ function RegisterForm() {
   return (
     <main className="w-full shadow px-2 py-5 bg-white">
       <h2 className="text-2xl font-normal text-gray-800">Register</h2>
-      <form className="mb-8" onSubmit={onSubmitHandler}>
+      <form className="mb-4" onSubmit={onSubmitHandler}>
         <div className="py-4">
           <input
             className="w-full p-2 rounded-sm border-2"
@@ -93,6 +94,7 @@ function RegisterForm() {
         </div>
         <Button>Submit</Button>
       </form>
+      <OAuth />
       <Link className="mt-8 text-xl text-orange-400 font-bold" to="/">
         Log In Instead
       </Link>

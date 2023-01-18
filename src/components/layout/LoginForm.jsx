@@ -3,6 +3,7 @@ import { toast } from "react-toastify";
 import { useNavigate, Link } from "react-router-dom";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import Button from "../Button";
+import OAuth from "../OAuth";
 
 function LoginForm() {
   const [formData, setFormData] = useState({
@@ -42,7 +43,7 @@ function LoginForm() {
   return (
     <main className="w-full shadow px-2 py-5 bg-white">
       <h2 className="text-2xl font-normal text-gray-800">Log In</h2>
-      <form className="mb-8" onSubmit={onSubmitHandler}>
+      <form className="mb-4" onSubmit={onSubmitHandler}>
         <div className="py-4">
           <input
             className="w-full p-2 rounded-sm border-2"
@@ -65,6 +66,7 @@ function LoginForm() {
         </div>
         <Button>Submit</Button>
       </form>
+      <OAuth />
       <Link className="mt-8 text-xl text-orange-400 font-bold" to="/register">
         Register Instead
       </Link>
