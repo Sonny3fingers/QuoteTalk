@@ -44,7 +44,6 @@ function Profile() {
       }
     } catch (error) {
       toast.error("Could not update profile details.");
-      console.log(error);
     }
   };
 
@@ -101,7 +100,7 @@ function Profile() {
             className={
               !changeDetails
                 ? "w-full text-xl px-1 outline-0"
-                : "w-full text-xl px-1 border-2 outline-0"
+                : "w-full text-xl px-1 border-2 outline-0 bg-gray-100"
             }
             id="name"
             disabled={!changeDetails}

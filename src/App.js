@@ -5,6 +5,7 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Chat from "./pages/Chat";
 import Profile from "./pages/Profile";
+import PrivateRoute from "./components/PrivateRoute";
 
 function App() {
   return (
@@ -13,7 +14,9 @@ function App() {
         <Routes>
           <Route path="/" element={<Login />} />
           <Route path="/chat" element={<Chat />} />
-          <Route path="/profile" element={<Profile />} />
+          <Route path="/profile" element={<PrivateRoute />}>
+            <Route path="/profile" element={<Profile />} />
+          </Route>
           <Route path="/register" element={<Register />} />
         </Routes>
       </Router>
