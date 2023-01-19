@@ -3,7 +3,7 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
-import Chat from "./pages/Chat";
+import Home from "./pages/Home";
 import Profile from "./pages/Profile";
 import PrivateRoute from "./components/PrivateRoute";
 
@@ -13,7 +13,9 @@ function App() {
       <Router>
         <Routes>
           <Route path="/" element={<Login />} />
-          <Route path="/chat" element={<Chat />} />
+          <Route path="/home" element={<PrivateRoute />}>
+            <Route path="/home" element={<Home />} />
+          </Route>
           <Route path="/profile" element={<PrivateRoute />}>
             <Route path="/profile" element={<Profile />} />
           </Route>

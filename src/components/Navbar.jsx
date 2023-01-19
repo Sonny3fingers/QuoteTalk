@@ -9,8 +9,8 @@ function Navbar() {
   };
   return (
     <nav className="w-full flex justify-evenly p-5 text-purple-800 text-2xl">
-      <NavLink style={navLinkStyle} to="/chat">
-        Chat
+      <NavLink style={navLinkStyle} to="/home">
+        Home
       </NavLink>
 
       <NavLink style={navLinkStyle} to="/profile">
