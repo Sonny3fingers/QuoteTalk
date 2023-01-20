@@ -2,9 +2,16 @@ import { useState } from "react";
 import Navbar from "../components/Navbar";
 import { getAuth, updateProfile } from "firebase/auth";
 import { doc, updateDoc } from "firebase/firestore";
+import {
+  getStorage,
+  ref,
+  uploadBytesResumable,
+  getDownloadURL,
+} from "firebase/storage";
 import { db } from "../firebase.config";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { v4 as uuidv4 } from "uuid";
 import ProfileImage from "../components/assets/png/profile.png";
 
 function Profile() {
@@ -14,10 +21,10 @@ function Profile() {
   const [formData, setFormData] = useState({
     name: auth.currentUser.displayName,
     email: auth.currentUser.email,
-    imageUrl: auth.currentUser.imgUrl,
+    imgUrl: auth.currentUser.photoURL,
   });
 
-  const { name, email } = formData;
+  const { name, email, imgUrl } = formData;
 
   const onLogoutHandler = () => {
     auth.signOut();
@@ -30,17 +37,62 @@ function Profile() {
 
   const onSubmitHandler = async () => {
     setChangeDetails((prevState) => !prevState);
+    console.log(auth.currentUser);
+    console.log(formData);
+    // Store image
+    const storeImage = async (image) => {
+      return new Promise((resolve, reject) => {
+        const storage = getStorage();
+        const fileName = `${auth.currentUser.uid}-${image.name}-${uuidv4()}`;
+        const storageRef = ref(storage, "images/" + fileName);
+
+        const uploadTask = uploadBytesResumable(storageRef, image);
+
+        uploadTask.on(
+          "state_changed",
+          (snapshot) => {
+            const progress =
+              (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            console.log("Upload is " + progress + "% done");
+          },
+          (error) => {
+            reject(error);
+          },
+          () => {
+            // Handle successful uploads on complete
+            // For instance, get the download URL: https://firebasestorage.googleapis.com/...
+            getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+              resolve(downloadURL);
+            });
+          }
+        );
+      });
+    };
+
+    // storeImage();
+    const storedImage = await storeImage(imgUrl).catch(() => {
+      toast.error("Image is not uploaded");
+      return;
+    });
+
+    console.log(storedImage);
+
     try {
-      if (auth.currentUser.displayName !== name) {
+      if (
+        auth.currentUser.displayName !== name ||
+        auth.currentUser.photoURL !== storedImage
+      ) {
         // Update display name in firebase
         await updateProfile(auth.currentUser, {
           displayName: name,
+          photoURL: storedImage,
         });
 
         // Update in firestore
         const userReference = doc(db, "users", auth.currentUser.uid);
         await updateDoc(userReference, {
           name: name,
+          photoURL: storedImage,
         });
       }
     } catch (error) {
@@ -60,8 +112,13 @@ function Profile() {
   };
 
   // Image Url
-  const uploadImageHandler = () => {
-    console.log("upload image");
+  const uploadImageHandler = (e) => {
+    if (e.target.files) {
+      setFormData((prevState) => ({
+        ...prevState,
+        imgUrl: e.target.files[0],
+      }));
+    }
   };
 
   return (
@@ -78,8 +135,7 @@ function Profile() {
       </header>
       <main className="w-full flex flex-col items-center p-5">
         <img
-          // Image URL
-          src={formData.imageUrl ?? ProfileImage}
+          src={imgUrl === "" ? ProfileImage : imgUrl}
           className="w-1/2 rounded-full mb-5"
           alt="profile img"
         />
@@ -117,7 +173,6 @@ function Profile() {
               />
             </fieldset>
             <fieldset>
-              {/* Image URL storage */}
               <input
                 type="file"
                 name="picture"
@@ -125,6 +180,7 @@ function Profile() {
                 onChange={uploadImageHandler}
                 accept=".jpg, .png, .jpeg"
                 max="1"
+                disabled={!changeDetails}
               />
             </fieldset>
             <p className="px-1 py-3">{email}</p>
