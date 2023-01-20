@@ -1,13 +1,31 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import ProfileImg from "../assets/png/profile.png";
 import SmallButton from "../SmallButton";
-import { getAuth } from "firebase/auth";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { addDoc, collection } from "firebase/firestore";
 import { db } from "../../firebase.config";
 import { toast } from "react-toastify";
+import Spinner from "../Spinner";
 
 function CreatePost() {
-  const [postData, setPostData] = useState({});
+  const [loading, setLoading] = useState(false);
+  const [postData, setPostData] = useState({
+    content: "",
+    likes: 0,
+    userId: "",
+  });
+
+  const auth = getAuth();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setPostData((prevState) => ({ ...prevState, userId: user.uid }));
+      }
+    });
+  }, [auth]);
 
   const onChangeHandler = (e) => {
     setPostData((prevState) => ({
@@ -19,18 +37,23 @@ function CreatePost() {
 
   const onSubmitHandler = async (e) => {
     e.preventDefault();
+    setLoading(true);
     try {
-      const auth = getAuth();
-
-      await addDoc(collection(db, "posts"), postData, {
-        userId: auth.currentUser.uid,
-      });
+      await addDoc(collection(db, "posts"), postData);
 
       toast.success("Created post.");
+      setLoading(false);
+      setPostData({});
     } catch (error) {
-      toast.error("Could not post data.");
+      toast.error("Could not send post data.");
+      setLoading(false);
+      setPostData({});
     }
   };
+
+  if (loading) {
+    return <Spinner />;
+  }
 
   return (
     <div className="w-full flex items-center bg-white p-5 mt-5 mb-5 max-[390px]:flex-col">

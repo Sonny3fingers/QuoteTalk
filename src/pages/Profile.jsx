@@ -14,6 +14,7 @@ function Profile() {
   const [formData, setFormData] = useState({
     name: auth.currentUser.displayName,
     email: auth.currentUser.email,
+    imageUrl: auth.currentUser.imgUrl,
   });
 
   const { name, email } = formData;
@@ -58,6 +59,11 @@ function Profile() {
     setChangeDetails((prevState) => !prevState);
   };
 
+  // Image Url
+  const uploadImageHandler = () => {
+    console.log("upload image");
+  };
+
   return (
     <>
       <Navbar />
@@ -72,7 +78,8 @@ function Profile() {
       </header>
       <main className="w-full flex flex-col items-center p-5">
         <img
-          src={ProfileImage}
+          // Image URL
+          src={formData.imageUrl ?? ProfileImage}
           className="w-1/2 rounded-full mb-5"
           alt="profile img"
         />
@@ -94,19 +101,34 @@ function Profile() {
               </span>
             )}
           </div>
-          <input
-            type="text"
-            value={name}
-            className={
-              !changeDetails
-                ? "w-full text-xl px-1 outline-0"
-                : "w-full text-xl px-1 border-2 outline-0 bg-gray-100"
-            }
-            id="name"
-            disabled={!changeDetails}
-            onChange={inputChangeHandler}
-          />
-          <p className="px-1 py-3">{email}</p>
+          <form>
+            <fieldset>
+              <input
+                type="text"
+                value={name}
+                className={
+                  !changeDetails
+                    ? "w-full text-xl px-1 mb-2 outline-0"
+                    : "w-full text-xl px-1 mb-2 border-2 outline-0 bg-gray-100"
+                }
+                id="name"
+                disabled={!changeDetails}
+                onChange={inputChangeHandler}
+              />
+            </fieldset>
+            <fieldset>
+              {/* Image URL storage */}
+              <input
+                type="file"
+                name="picture"
+                id="picture"
+                onChange={uploadImageHandler}
+                accept=".jpg, .png, .jpeg"
+                max="1"
+              />
+            </fieldset>
+            <p className="px-1 py-3">{email}</p>
+          </form>
         </div>
       </main>
     </>
