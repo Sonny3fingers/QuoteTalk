@@ -1,7 +1,7 @@
 import { useState } from "react";
 import Navbar from "../components/Navbar";
 import { getAuth, updateProfile } from "firebase/auth";
-import { doc, updateDoc } from "firebase/firestore";
+import { doc, updateDoc, getDoc } from "firebase/firestore";
 import {
   getStorage,
   ref,
@@ -18,6 +18,9 @@ function Profile() {
   const auth = getAuth();
   const navigate = useNavigate();
   const [changeDetails, setChangeDetails] = useState(false);
+  const [uploadedImageUrl, setUploadedImageUrl] = useState(
+    auth.currentUser.photoURL
+  );
   const [formData, setFormData] = useState({
     name: auth.currentUser.displayName,
     email: auth.currentUser.email,
@@ -37,9 +40,7 @@ function Profile() {
 
   const onSubmitHandler = async () => {
     setChangeDetails((prevState) => !prevState);
-    console.log(auth.currentUser);
-    console.log(formData);
-    // Store image
+    // Store image to firebase storage
     const storeImage = async (image) => {
       return new Promise((resolve, reject) => {
         const storage = getStorage();
@@ -75,8 +76,6 @@ function Profile() {
       return;
     });
 
-    console.log(storedImage);
-
     try {
       if (
         auth.currentUser.displayName !== name ||
@@ -87,13 +86,14 @@ function Profile() {
           displayName: name,
           photoURL: storedImage,
         });
-
         // Update in firestore
         const userReference = doc(db, "users", auth.currentUser.uid);
         await updateDoc(userReference, {
           name: name,
           photoURL: storedImage,
         });
+
+        getImageUrl();
       }
     } catch (error) {
       toast.error("Could not update profile details.");
@@ -121,6 +121,17 @@ function Profile() {
     }
   };
 
+  const getImageUrl = async () => {
+    const docRef = doc(db, "users", auth.currentUser.uid);
+    const docSnap = await getDoc(docRef);
+    if (docSnap.exists()) {
+      setUploadedImageUrl(docSnap.data().photoURL);
+    } else {
+      // doc.data() will be undefined in this case
+      toast.error("No such data.");
+    }
+  };
+
   return (
     <>
       <Navbar />
@@ -135,7 +146,7 @@ function Profile() {
       </header>
       <main className="w-full flex flex-col items-center p-5">
         <img
-          src={imgUrl === "" ? ProfileImage : imgUrl}
+          src={uploadedImageUrl ? uploadedImageUrl : ProfileImage}
           className="w-1/2 rounded-full mb-5"
           alt="profile img"
         />

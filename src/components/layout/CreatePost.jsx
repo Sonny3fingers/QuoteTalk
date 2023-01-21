@@ -14,6 +14,7 @@ function CreatePost() {
     content: "",
     likes: 0,
     userId: "",
+    imgUrl: "",
   });
 
   const auth = getAuth();
@@ -22,7 +23,11 @@ function CreatePost() {
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
       if (user) {
-        setPostData((prevState) => ({ ...prevState, userId: user.uid }));
+        setPostData((prevState) => ({
+          ...prevState,
+          userId: user.uid,
+          imgUrl: user.photoURL,
+        }));
       }
     });
   }, [auth]);
@@ -57,7 +62,11 @@ function CreatePost() {
 
   return (
     <div className="w-full flex items-center bg-white p-5 mt-5 mb-5 max-[390px]:flex-col">
-      <img className="w-16 rounded-full p-2" src={ProfileImg} alt="profile" />
+      <img
+        className="w-16 rounded-full p-2"
+        src={postData.imgUrl ? postData.imgUrl : ProfileImg}
+        alt="profile"
+      />
       <form
         className="w-full flex grow h-20 max-[390px]:flex-col max-[390px]:h-32"
         onSubmit={onSubmitHandler}
