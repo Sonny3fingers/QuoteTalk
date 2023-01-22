@@ -12,7 +12,7 @@ import { db } from "../firebase.config";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { v4 as uuidv4 } from "uuid";
-import ProfileImage from "../components/assets/png/profile.png";
+import blancProfileImage from "../components/assets/png/profile.png";
 import Spinner from "../components/Spinner";
 
 function Profile() {
@@ -155,12 +155,12 @@ function Profile() {
         </button>
       </header>
       <main className="w-full flex flex-col items-center p-5">
-        <img
-          // src={uploadedImageUrl ? uploadedImageUrl : ProfileImage}
-          src={uploadedImageUrl || ProfileImage}
-          className="w-1/2 rounded-full mb-5"
-          alt="profile img"
-        />
+        <div
+          className="w-40 h-40 justify-center  bg-no-repeat bg-cover bg-center rounded-full mb-5 border-4 bg-white"
+          style={{
+            backgroundImage: `url( ${uploadedImageUrl || blancProfileImage})`,
+          }}
+        ></div>
         <div className="w-full rounded-lg bg-white p-5 font-semibold">
           <div className="flex justify-between items-center pb-5">
             <h3 className="text-sm font-normal ">Personal Details</h3>
