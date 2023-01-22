@@ -13,10 +13,12 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { v4 as uuidv4 } from "uuid";
 import ProfileImage from "../components/assets/png/profile.png";
+import Spinner from "../components/Spinner";
 
 function Profile() {
   const auth = getAuth();
   const navigate = useNavigate();
+  const [loader, setLoader] = useState(false);
   const [changeDetails, setChangeDetails] = useState(false);
   const [uploadedImageUrl, setUploadedImageUrl] = useState(
     auth.currentUser.photoURL
@@ -40,6 +42,7 @@ function Profile() {
 
   const onSubmitHandler = async () => {
     setChangeDetails((prevState) => !prevState);
+    setLoader(true);
     // Store image to firebase storage
     const storeImage = async (image) => {
       return new Promise((resolve, reject) => {
@@ -94,9 +97,12 @@ function Profile() {
         });
 
         getImageUrl();
+
+        setLoader(false);
       }
     } catch (error) {
       toast.error("Could not update profile details.");
+      setLoader(false);
     }
   };
 
@@ -132,6 +138,10 @@ function Profile() {
     }
   };
 
+  if (loader) {
+    return <Spinner />;
+  }
+
   return (
     <>
       <Navbar />
@@ -146,7 +156,8 @@ function Profile() {
       </header>
       <main className="w-full flex flex-col items-center p-5">
         <img
-          src={uploadedImageUrl ? uploadedImageUrl : ProfileImage}
+          // src={uploadedImageUrl ? uploadedImageUrl : ProfileImage}
+          src={uploadedImageUrl || ProfileImage}
           className="w-1/2 rounded-full mb-5"
           alt="profile img"
         />
