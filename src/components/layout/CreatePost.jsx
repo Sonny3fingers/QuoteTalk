@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 import ProfileImg from "../assets/png/profile.png";
 import SmallButton from "../SmallButton";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
@@ -9,16 +9,17 @@ import { toast } from "react-toastify";
 import Spinner from "../Spinner";
 
 function CreatePost() {
+  const auth = getAuth();
+  // const navigate = useNavigate();
+
   const [loading, setLoading] = useState(false);
   const [postData, setPostData] = useState({
     content: "",
     likes: 0,
     userId: "",
     imgUrl: "",
+    name: "",
   });
-
-  const auth = getAuth();
-  const navigate = useNavigate();
 
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
@@ -27,6 +28,7 @@ function CreatePost() {
           ...prevState,
           userId: user.uid,
           imgUrl: user.photoURL,
+          name: user.displayName,
         }));
       }
     });
@@ -48,11 +50,17 @@ function CreatePost() {
 
       toast.success("Created post.");
       setLoading(false);
-      setPostData({});
+      setPostData((prevState) => ({
+        ...prevState,
+        content: "",
+      }));
     } catch (error) {
-      toast.error("Could not send post data.");
+      toast.error("Could not create post data.");
       setLoading(false);
-      setPostData({});
+      setPostData((prevState) => ({
+        ...prevState,
+        content: "",
+      }));
     }
   };
 
@@ -61,12 +69,11 @@ function CreatePost() {
   }
 
   return (
-    <div className="w-full flex items-center bg-white p-5 mt-5 mb-5 max-[390px]:flex-col">
-      <img
-        className="w-16 rounded-full p-2"
-        src={postData.imgUrl ? postData.imgUrl : ProfileImg}
-        alt="profile"
-      />
+    <div className="w-full flex items-center bg-white p-5 mt-5 mb-5 rounded-lg max-[390px]:flex-col">
+      <div
+        className="w-16 h-16 rounded-full p-2 m-2 border-2 bg-center bg-cover bg-no-repeat"
+        style={{ backgroundImage: `url(${postData.imgUrl || ProfileImg})` }}
+      ></div>
       <form
         className="w-full flex grow h-20 max-[390px]:flex-col max-[390px]:h-32"
         onSubmit={onSubmitHandler}
