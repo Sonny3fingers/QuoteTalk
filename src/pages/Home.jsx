@@ -1,13 +1,13 @@
 import Navbar from "../components/Navbar";
 import CreatePost from "../components/layout/CreatePost";
-import MainPosts from "../components/layout/MainPosts";
+import MainPostList from "../components/layout/MainPostList";
 
 function Home() {
   return (
     <>
       <Navbar />
       <CreatePost />
-      <MainPosts />
+      <MainPostList />
     </>
   );
 }
