@@ -7,7 +7,7 @@ import { db } from "../../firebase.config";
 import { toast } from "react-toastify";
 import Spinner from "../Spinner";
 
-function CreatePost() {
+function CreatePost({ createdPostHandler }) {
   const auth = getAuth();
 
   const [loading, setLoading] = useState(false);
@@ -43,6 +43,7 @@ function CreatePost() {
   const onSubmitHandler = async (e) => {
     e.preventDefault();
     setLoading(true);
+
     try {
       await addDoc(collection(db, "posts"), postData);
 
@@ -52,6 +53,7 @@ function CreatePost() {
         ...prevState,
         content: "",
       }));
+      createdPostHandler(postData);
     } catch (error) {
       toast.error("Could not create post data.");
       setLoading(false);

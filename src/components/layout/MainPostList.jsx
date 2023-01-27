@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { collection, query, getDocs } from "firebase/firestore";
+import { collection, query, getDocs, orderBy } from "firebase/firestore";
 import { db } from "../../firebase.config";
 import { toast } from "react-toastify";
 import Spinner from "../Spinner";
 import PostItem from "./PostItem";
 
-function MainPostList() {
+function MainPostList({ createdPost }) {
   const [posts, setPosts] = useState(null);
   const [comments, setComments] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -39,7 +39,7 @@ function MainPostList() {
     } catch (error) {
       toast.error("Could not fetch data.");
     }
-  }, []);
+  }, [createdPost]);
 
   const onDeletePost = (updatedPosts) => {
     setPosts(updatedPosts);

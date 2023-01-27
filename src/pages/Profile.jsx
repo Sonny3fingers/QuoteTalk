@@ -49,7 +49,6 @@ function Profile() {
         const storage = getStorage();
         const fileName = `${auth.currentUser.uid}-${image.name}-${uuidv4()}`;
         const storageRef = ref(storage, "images/" + fileName);
-
         const uploadTask = uploadBytesResumable(storageRef, image);
 
         uploadTask.on(
