@@ -1,13 +1,29 @@
 import React from "react";
 import { getAuth } from "firebase/auth";
+import { doc, deleteDoc } from "firebase/firestore";
+import { db } from "../../firebase.config";
+import { toast } from "react-toastify";
 import blancProfilePhoto from "../assets/png/profile.png";
 import EditIcon from "../assets/png/edit.png";
 import DeleteIcon from "../assets/png/delete.png";
 import LikeIcon from "../assets/png/like.png";
 import ReplyIcon from "../assets/png/reply.png";
 
-function CommentItem({ comment }) {
+function CommentItem({ comment, comments, onDeleteComment }) {
   const auth = getAuth();
+
+  const deleteHandler = async (commentId) => {
+    try {
+      await deleteDoc(doc(db, "comments", comment.id));
+      const updatedComments = comments.filter(
+        (comment) => comment.id !== commentId
+      );
+      onDeleteComment(updatedComments);
+      toast.success("Comment deleted.");
+    } catch (error) {
+      toast.error("Could not delete post.");
+    }
+  };
 
   return (
     <li className="w-11/12 flex flex-col bg-white rounded-lg self-end p-2 mb-4">
@@ -31,7 +47,12 @@ function CommentItem({ comment }) {
         </button>
         {auth.currentUser.uid === comment.data.userId ? (
           <div className="flex ">
-            <button className="flex items-center mr-2 transition-all hover:text-rose-600">
+            <button
+              className="flex items-center mr-2 transition-all hover:text-rose-600"
+              onClick={() => {
+                deleteHandler(comment.id);
+              }}
+            >
               <img className="w-4 h-4 mr-1" src={DeleteIcon} alt="reply" />
               <span>delete</span>
             </button>

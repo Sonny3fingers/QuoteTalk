@@ -41,6 +41,14 @@ function MainPostList() {
     }
   }, []);
 
+  const onDeletePost = (updatedPosts) => {
+    setPosts(updatedPosts);
+  };
+
+  const onDeleteComment = (updatedComments) => {
+    setComments(updatedComments);
+  };
+
   return (
     <div className="bg-gray-100 w-fit px-4" style={{ width: "107%" }}>
       <h3>Main Post List</h3>
@@ -51,7 +59,14 @@ function MainPostList() {
           <main>
             <ul>
               {posts.map((post) => (
-                <PostItem key={post.id} post={post} comments={comments} />
+                <PostItem
+                  key={post.id}
+                  post={post}
+                  comments={comments}
+                  posts={posts}
+                  onDeletePost={onDeletePost}
+                  onDeleteComment={onDeleteComment}
+                />
               ))}
             </ul>
           </main>
