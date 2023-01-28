@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import ProfileImg from "../assets/png/profile.png";
 import SmallButton from "../SmallButton";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
-import { addDoc, collection } from "firebase/firestore";
+import { addDoc, collection, serverTimestamp } from "firebase/firestore";
 import { db } from "../../firebase.config";
 import { toast } from "react-toastify";
 import Spinner from "../Spinner";
@@ -45,8 +45,10 @@ function CreateComment({ postId, onCloseCommentForm, onCreateCommentHandler }) {
     e.preventDefault();
     setLoading(true);
 
+    const formData = { ...comment, timestamp: serverTimestamp() };
+
     try {
-      await addDoc(collection(db, "comments"), comment);
+      await addDoc(collection(db, "comments"), formData);
 
       toast.success("Comment created.");
       setLoading(false);

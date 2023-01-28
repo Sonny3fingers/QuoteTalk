@@ -43,7 +43,10 @@ function PostItem({
 
   return (
     <>
-      <li className="flex flex-col p-4 mb-4 bg-white rounded-lg">
+      <li
+        className="flex flex-col p-4 mb-4 bg-white rounded-lg animation-none"
+        style={{ animationIterationCount: 1 }}
+      >
         <div className="flex items-center border-b-2">
           <div
             className="w-10 h-10 rounded-full p-2 m-1 border-2 bg-center bg-cover bg-no-repeat"

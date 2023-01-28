@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import ProfileImg from "../assets/png/profile.png";
 import SmallButton from "../SmallButton";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
-import { addDoc, collection } from "firebase/firestore";
+import { addDoc, collection, serverTimestamp } from "firebase/firestore";
 import { db } from "../../firebase.config";
 import { toast } from "react-toastify";
 import Spinner from "../Spinner";
@@ -42,10 +42,13 @@ function CreatePost({ createdPostHandler }) {
 
   const onSubmitHandler = async (e) => {
     e.preventDefault();
+    const formData = {
+      ...postData,
+      timestamp: serverTimestamp(),
+    };
     setLoading(true);
-
     try {
-      await addDoc(collection(db, "posts"), postData);
+      await addDoc(collection(db, "posts"), formData);
 
       toast.success("Created post.");
       setLoading(false);
