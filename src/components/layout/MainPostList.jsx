@@ -8,7 +8,14 @@ import PostItem from "./PostItem";
 function MainPostList({ createdPost }) {
   const [posts, setPosts] = useState(null);
   const [comments, setComments] = useState(null);
+  const [createdComment, setCreatedComment] = useState(null);
   const [loading, setLoading] = useState(true);
+
+  const onCreateCommentHandler = (newComment) => {
+    setTimeout(() => {
+      setCreatedComment(newComment);
+    }, [2000]);
+  };
 
   useEffect(() => {
     try {
@@ -39,7 +46,7 @@ function MainPostList({ createdPost }) {
     } catch (error) {
       toast.error("Could not fetch data.");
     }
-  }, [createdPost]);
+  }, [createdPost, createdComment]);
 
   const onDeletePost = (updatedPosts) => {
     setPosts(updatedPosts);
@@ -66,6 +73,7 @@ function MainPostList({ createdPost }) {
                   posts={posts}
                   onDeletePost={onDeletePost}
                   onDeleteComment={onDeleteComment}
+                  onCreateCommentHandler={onCreateCommentHandler}
                 />
               ))}
             </ul>

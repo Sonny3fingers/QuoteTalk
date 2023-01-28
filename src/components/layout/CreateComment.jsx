@@ -7,7 +7,7 @@ import { db } from "../../firebase.config";
 import { toast } from "react-toastify";
 import Spinner from "../Spinner";
 
-function CreateComment({ postId, onCloseCommentForm }) {
+function CreateComment({ postId, onCloseCommentForm, onCreateCommentHandler }) {
   const auth = getAuth();
 
   const [loading, setLoading] = useState(false);
@@ -55,6 +55,7 @@ function CreateComment({ postId, onCloseCommentForm }) {
         content: "",
       }));
       onCloseCommentForm();
+      onCreateCommentHandler(comment);
     } catch (error) {
       toast.error("Could not create a comment");
       setLoading(false);

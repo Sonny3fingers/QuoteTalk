@@ -10,8 +10,16 @@ import DeleteIcon from "../assets/png/delete.png";
 import CommentItem from "./CommentItem";
 import CreateComment from "./CreateComment";
 
-function PostItem({ post, comments, posts, onDeletePost, onDeleteComment }) {
+function PostItem({
+  post,
+  comments,
+  posts,
+  onDeletePost,
+  onDeleteComment,
+  onCreateCommentHandler,
+}) {
   const [showCommentForm, setShowCommentForm] = useState(false);
+
   const auth = getAuth();
 
   const replyClickHandler = () => {
@@ -25,7 +33,6 @@ function PostItem({ post, comments, posts, onDeletePost, onDeleteComment }) {
   const deleteHandler = async (postId) => {
     try {
       await deleteDoc(doc(db, "posts", postId));
-      // e.target.closest("li").remove();
       const updatePosts = posts.filter((post) => post.id !== postId);
       onDeletePost(updatePosts);
       toast.success("Post deleted.");
@@ -81,6 +88,7 @@ function PostItem({ post, comments, posts, onDeletePost, onDeleteComment }) {
         <CreateComment
           postId={post.id}
           onCloseCommentForm={onCloseCommentForm}
+          onCreateCommentHandler={onCreateCommentHandler}
         />
       )}
       <ul className="w-full flex flex-col">
