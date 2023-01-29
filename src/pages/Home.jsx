@@ -1,7 +1,7 @@
 import { useState } from "react";
 import Navbar from "../components/Navbar";
 import CreatePost from "../components/layout/CreatePost";
-import MainPostList from "../components/layout/MainPostList";
+import PostList from "../components/layout/PostList";
 
 function Home() {
   const [createdPost, setCreatedPost] = useState(null);
@@ -15,7 +15,7 @@ function Home() {
     <>
       <Navbar />
       <CreatePost createdPostHandler={createdPostHandler} />
-      <MainPostList createdPost={createdPost} />
+      <PostList createdPost={createdPost} />
     </>
   );
 }

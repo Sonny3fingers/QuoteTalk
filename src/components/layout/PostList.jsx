@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 import Spinner from "../Spinner";
 import PostItem from "./PostItem";
 
-function MainPostList({ createdPost }) {
+function PostList({ createdPost }) {
   const [posts, setPosts] = useState(null);
   const [comments, setComments] = useState(null);
   const [createdComment, setCreatedComment] = useState(null);
@@ -27,8 +27,8 @@ function MainPostList({ createdPost }) {
         );
         const q2 = query(
           collection(db, "comments"),
-          orderBy("timestamp", "asc"),
-          limit(4)
+          orderBy("timestamp", "asc")
+          // limit(10)
         );
         const getPosts = async () => {
           const querySnapshot = await getDocs(q);
@@ -97,4 +97,4 @@ function MainPostList({ createdPost }) {
   );
 }
 
-export default MainPostList;
+export default PostList;

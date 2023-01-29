@@ -9,6 +9,7 @@ import EditIcon from "../assets/png/edit.png";
 import DeleteIcon from "../assets/png/delete.png";
 import CommentItem from "./CommentItem";
 import CreateComment from "./CreateComment";
+import EditPost from "./EditPost";
 
 function PostItem({
   post,
@@ -17,8 +18,11 @@ function PostItem({
   onDeletePost,
   onDeleteComment,
   onCreateCommentHandler,
+  createdPost,
 }) {
   const [showCommentForm, setShowCommentForm] = useState(false);
+  const [editPostForm, setEditPostForm] = useState(false);
+  const [editContentValue, setEditContentValue] = useState(null);
 
   const auth = getAuth();
 
@@ -41,6 +45,11 @@ function PostItem({
     }
   };
 
+  const editHandler = (editContent) => {
+    setEditPostForm((prevState) => !prevState);
+    setEditContentValue(editContent);
+  };
+
   return (
     <>
       <li
@@ -54,7 +63,7 @@ function PostItem({
           ></div>
           <span>{post.data.name}</span>
         </div>
-        <p className="p-1">{post.data.content}</p>
+        <p className="p-1">{editContentValue ?? post.data.content}</p>
         <div className="flex items-center justify-between border-t-2 p-1">
           <button className="flex items-center font-bold transition-all hover:text-teal-500">
             <img className="w-4 h-4 mr-1" src={LikeIcon} alt="like" />
@@ -71,9 +80,14 @@ function PostItem({
                 <img className="w-4 h-4 mr-1" src={DeleteIcon} alt="reply" />
                 <span>delete</span>
               </button>
-              <button className="flex items-center transition-all hover:text-blue-600">
+              <button
+                className="flex items-center transition-all hover:text-blue-600"
+                onClick={() => {
+                  editHandler();
+                }}
+              >
                 <img className="w-4 h-4 mr-1" src={EditIcon} alt="reply" />
-                <span>edit</span>
+                <span>{!editPostForm ? "edit" : "cancel"}</span>
               </button>
             </div>
           ) : (
@@ -94,6 +108,8 @@ function PostItem({
           onCreateCommentHandler={onCreateCommentHandler}
         />
       )}
+      {editPostForm && <EditPost post={post} editHandler={editHandler} />}
+
       <ul className="w-full flex flex-col">
         {comments.map((comment) =>
           comment.data.postId === post.id ? (
