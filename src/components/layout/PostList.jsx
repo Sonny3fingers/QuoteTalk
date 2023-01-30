@@ -68,7 +68,7 @@ function PostList({ createdPost }) {
   };
 
   return (
-    <div className="bg-gray-100 w-fit px-4" style={{ width: "107%" }}>
+    <div className="bg-gray-100 w-fit px-4 pb-6" style={{ width: "107%" }}>
       <h3>Feed:</h3>
       {loading ? (
         <Spinner />

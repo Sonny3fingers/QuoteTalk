@@ -118,6 +118,7 @@ function PostItem({
               comment={comment}
               comments={comments}
               onDeleteComment={onDeleteComment}
+              onCreateCommentHandler={onCreateCommentHandler}
             >
               {comment.data.content}
             </CommentItem>
