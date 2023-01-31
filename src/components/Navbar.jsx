@@ -9,11 +9,19 @@ function Navbar() {
   };
   return (
     <nav className="w-full flex justify-evenly p-5 text-purple-800 text-2xl">
-      <NavLink style={navLinkStyle} to="/home">
+      <NavLink
+        style={navLinkStyle}
+        className="transition-all easy duration-500 hover:text-purple-400"
+        to="/home"
+      >
         Home
       </NavLink>
 
-      <NavLink style={navLinkStyle} to="/profile">
+      <NavLink
+        style={navLinkStyle}
+        className="transition-all easy duration-500 hover:text-purple-400"
+        to="/profile"
+      >
         Profile
       </NavLink>
     </nav>

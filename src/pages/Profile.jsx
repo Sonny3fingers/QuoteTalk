@@ -153,7 +153,7 @@ function Profile() {
           Log out
         </button>
       </header>
-      <main className="w-full flex flex-col items-center p-5">
+      <main className="w-full flex flex-col items-center p-5 animate-fadeIn">
         <div
           className="w-40 h-40 justify-center  bg-no-repeat bg-cover bg-center rounded-full mb-5 border-4 bg-white"
           style={{
@@ -164,14 +164,14 @@ function Profile() {
           <div className="flex justify-between items-center pb-5">
             <h3 className="text-sm font-normal ">Personal Details</h3>
             <span
-              className="text-sm text-orange-400 font-bold hover:text-orange-500 cursor-pointer"
+              className="text-sm text-orange-400 font-bold hover:text-orange-600 cursor-pointer transition-all duration-500 easy-out animate-fadeIn"
               onClick={!changeDetails ? changeDetailsHandler : onSubmitHandler}
             >
               {changeDetails ? "Done" : "Change"}
             </span>
             {changeDetails && (
               <span
-                className="text-sm text-orange-400 font-bold hover:text-orange-500 cursor-pointer"
+                className="text-sm text-orange-400 font-bold hover:text-orange-600 cursor-pointer transition duration-500 easy-out animate-fadeIn"
                 onClick={cancelInputHandler}
               >
                 Cancel

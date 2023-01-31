@@ -53,7 +53,7 @@ function PostItem({
   return (
     <>
       <li
-        className="flex flex-col p-4 mb-4 bg-white rounded-lg animation-none"
+        className="flex flex-col p-4 mb-2 bg-white rounded-lg animate-fadeIn"
         style={{ animationIterationCount: 1 }}
       >
         <div className="flex items-center border-b-2">
@@ -96,7 +96,7 @@ function PostItem({
               onClick={replyClickHandler}
             >
               <img className="w-4 h-4 mr-1" src={ReplyIcon} alt="reply" />
-              <span>reply</span>
+              <span>{showCommentForm ? "cancel" : "reply"}</span>
             </button>
           )}
         </div>

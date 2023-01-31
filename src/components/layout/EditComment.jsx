@@ -58,7 +58,7 @@ function EditComment({ commentData, editCommentHandler }) {
   }
 
   return (
-    <div className="w-full flex items-center bg-white p-5 mt-2 mb-2 rounded-lg max-[390px]:flex-col">
+    <div className="w-full flex items-center bg-white p-5 mt-2 mb-2 rounded-lg max-[390px]:flex-col transition duration-500 easy-in animate-fadeIn">
       <div
         className="w-16 h-16 rounded-full p-2 m-2 border-2 bg-center bg-cover bg-no-repeat"
         style={{ backgroundImage: `url(${comment.imgUrl || ProfileImg})` }}

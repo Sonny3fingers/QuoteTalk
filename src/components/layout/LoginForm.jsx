@@ -67,7 +67,10 @@ function LoginForm() {
         <Button>Submit</Button>
       </form>
       <OAuth />
-      <Link className="mt-8 text-xl text-orange-400 font-bold" to="/register">
+      <Link
+        className="mt-8 text-xl text-orange-400 font-bold transition ease-out duration-500 hover:text-orange-600"
+        to="/register"
+      >
         Register Instead
       </Link>
     </main>

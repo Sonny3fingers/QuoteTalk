@@ -73,7 +73,7 @@ function CreateComment({ postId, onCloseCommentForm, onCreateCommentHandler }) {
   }
 
   return (
-    <div className="w-full flex items-center bg-white p-5 mt-5 mb-5 rounded-lg max-[390px]:flex-col">
+    <div className="w-full flex items-center bg-white p-5 mb-2 rounded-lg max-[390px]:flex-col animate-fadeIn">
       <div
         className="w-16 h-16 rounded-full p-2 m-2 border-2 bg-center bg-cover bg-no-repeat"
         style={{ backgroundImage: `url(${comment.imgUrl || ProfileImg})` }}

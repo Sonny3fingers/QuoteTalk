@@ -10,6 +10,7 @@ import LikeIcon from "../assets/png/like.png";
 import ReplyIcon from "../assets/png/reply.png";
 import EditComment from "./EditComment";
 import CreateComment from "./CreateComment";
+import ConfirmModal from "./ConfirmModal";
 
 function CommentItem({
   comment,
@@ -22,18 +23,31 @@ function CommentItem({
   const [showEditComment, setShowEditComment] = useState(false);
   const [showCreateComment, setShowCreateComment] = useState(false);
   const [updatedComment, setUpdatedComment] = useState(null);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [deleteCommentItem, setDeleteCommentItem] = useState(false);
 
   const deleteHandler = async (commentId) => {
-    try {
-      await deleteDoc(doc(db, "comments", comment.id));
-      const updatedComments = comments.filter(
-        (comment) => comment.id !== commentId
-      );
-      onDeleteComment(updatedComments);
-      toast.success("Comment deleted.");
-    } catch (error) {
-      toast.error("Could not delete post.");
+    setShowConfirmModal(true);
+    if (deleteCommentItem) {
+      try {
+        await deleteDoc(doc(db, "comments", comment.id));
+        const updatedComments = comments.filter(
+          (comment) => comment.id !== commentId
+        );
+        onDeleteComment(updatedComments);
+        toast.success("Comment deleted.");
+      } catch (error) {
+        toast.error("Could not delete post.");
+      }
     }
+  };
+
+  const onShowConfirmHandler = () => {
+    setShowConfirmModal(false);
+  };
+
+  const onConfirmDeleteHandler = () => {
+    setDeleteCommentItem(true);
   };
 
   const editCommentHandler = (updatedContent) => {
@@ -42,7 +56,6 @@ function CommentItem({
   };
 
   const replyClickHandler = () => {
-    console.log("reply");
     setShowCreateComment((prevState) => !prevState);
   };
 
@@ -52,7 +65,7 @@ function CommentItem({
 
   return (
     <>
-      <li className="w-11/12 flex flex-col bg-white rounded-lg self-end p-2 mb-2">
+      <li className="w-11/12 flex flex-col bg-white rounded-lg self-end p-2 mb-2 animate-fadeIn">
         <div className="flex items-center">
           <div
             className="w-9 h-9 rounded-full p-1 m-1 border-2 bg-center bg-cover bg-no-repeat"
@@ -105,6 +118,12 @@ function CommentItem({
           )}
         </div>
       </li>
+      {showConfirmModal && (
+        <ConfirmModal
+          onShowConfirmHandler={onShowConfirmHandler}
+          onConfirmDeleteHandler={onConfirmDeleteHandler}
+        />
+      )}
       {showCreateComment && (
         <CreateComment
           postId={comment.data.postId}

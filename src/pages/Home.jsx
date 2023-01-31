@@ -11,6 +11,7 @@ function Home() {
       setCreatedPost(post);
     }, [2000]);
   };
+
   return (
     <>
       <Navbar />
