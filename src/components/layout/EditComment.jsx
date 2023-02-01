@@ -44,11 +44,11 @@ function EditComment({ commentData, editCommentHandler }) {
         content: formData.content,
       });
 
-      toast.success("Comment created.");
+      toast.success("Comment updated.");
       setLoading(false);
       editCommentHandler(formData.content);
     } catch (error) {
-      toast.error("Could not create a comment");
+      toast.error("Could not update a comment");
       setLoading(false);
     }
   };

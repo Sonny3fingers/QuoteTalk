@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { getAuth } from "firebase/auth";
 import { doc, deleteDoc } from "firebase/firestore";
 import { db } from "../../firebase.config";
@@ -10,6 +10,7 @@ import DeleteIcon from "../assets/png/delete.png";
 import CommentItem from "./CommentItem";
 import CreateComment from "./CreateComment";
 import EditPost from "./EditPost";
+import ConfirmModal from "./ConfirmModal";
 
 function PostItem({
   post,
@@ -23,8 +24,17 @@ function PostItem({
   const [showCommentForm, setShowCommentForm] = useState(false);
   const [editPostForm, setEditPostForm] = useState(false);
   const [editContentValue, setEditContentValue] = useState(null);
-
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [deletePostItem, setDeletePostItem] = useState(false);
   const auth = getAuth();
+
+  const onShowConfirmHandler = () => {
+    setShowConfirmModal((prevState) => !prevState);
+  };
+
+  const onConfirmDeleteHandler = () => {
+    setDeletePostItem(true);
+  };
 
   const replyClickHandler = () => {
     setShowCommentForm((prevState) => !prevState);
@@ -34,16 +44,21 @@ function PostItem({
     setShowCommentForm(false);
   };
 
-  const deleteHandler = async (postId) => {
-    try {
-      await deleteDoc(doc(db, "posts", postId));
-      const updatePosts = posts.filter((post) => post.id !== postId);
-      onDeletePost(updatePosts);
-      toast.success("Post deleted.");
-    } catch (error) {
-      toast.error("Could not delete post.");
+  useEffect(() => {
+    if (deletePostItem) {
+      const deleteHandler = async (postId) => {
+        try {
+          await deleteDoc(doc(db, "posts", postId));
+          const updatePosts = posts.filter((post) => post.id !== postId);
+          onDeletePost(updatePosts);
+          toast.success("Post deleted.");
+        } catch (error) {
+          toast.error("Could not delete post.");
+        }
+      };
+      deleteHandler(post.id);
     }
-  };
+  }, [deletePostItem, post.id, onDeletePost, posts]);
 
   const editHandler = (editContent) => {
     setEditPostForm((prevState) => !prevState);
@@ -74,7 +89,8 @@ function PostItem({
               <button
                 className="flex items-center mr-2 transition-all hover:text-rose-600"
                 onClick={() => {
-                  deleteHandler(post.id);
+                  onShowConfirmHandler();
+                  // deleteHandler(post.id);
                 }}
               >
                 <img className="w-4 h-4 mr-1" src={DeleteIcon} alt="reply" />
@@ -101,6 +117,12 @@ function PostItem({
           )}
         </div>
       </li>
+      {showConfirmModal && (
+        <ConfirmModal
+          onShowConfirmHandler={onShowConfirmHandler}
+          onConfirmDeleteHandler={onConfirmDeleteHandler}
+        />
+      )}
       {showCommentForm && (
         <CreateComment
           postId={post.id}

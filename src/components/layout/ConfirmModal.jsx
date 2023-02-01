@@ -6,14 +6,13 @@ function ConfirmModal({ onShowConfirmHandler, onConfirmDeleteHandler }) {
   };
 
   const confirmDeleteHandler = () => {
-    console.log("Hello");
     onShowConfirmHandler();
     onConfirmDeleteHandler();
   };
 
   return (
     <div className="fixed bottom-0 left-0 w-full h-full flex justify-center items-center backdrop-blur-lg backdrop-opacity-90 transition animate-fadeInFaster">
-      <div className="bg-white p-6 m-2 border-4 rounded-lg">
+      <div className="bg-white p-10 m-2 border-4 rounded-lg">
         <p className="text-2xl mb-12 text-center">
           Are you sure you want to delete?
         </p>

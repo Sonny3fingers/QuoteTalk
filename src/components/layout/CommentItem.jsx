@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { getAuth } from "firebase/auth";
 import { doc, deleteDoc } from "firebase/firestore";
 import { db } from "../../firebase.config";
@@ -26,24 +26,28 @@ function CommentItem({
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [deleteCommentItem, setDeleteCommentItem] = useState(false);
 
-  const deleteHandler = async (commentId) => {
-    setShowConfirmModal(true);
+  useEffect(() => {
     if (deleteCommentItem) {
-      try {
-        await deleteDoc(doc(db, "comments", comment.id));
-        const updatedComments = comments.filter(
-          (comment) => comment.id !== commentId
-        );
-        onDeleteComment(updatedComments);
-        toast.success("Comment deleted.");
-      } catch (error) {
-        toast.error("Could not delete post.");
-      }
+      const deleteHandler = async (commentId) => {
+        if (deleteCommentItem) {
+          try {
+            await deleteDoc(doc(db, "comments", commentId));
+            const updatedComments = comments.filter(
+              (comment) => comment.id !== commentId
+            );
+            onDeleteComment(updatedComments);
+            toast.success("Comment deleted.");
+          } catch (error) {
+            toast.error("Could not delete post.");
+          }
+        }
+      };
+      deleteHandler(comment.id);
     }
-  };
+  }, [deleteCommentItem, comment.id, comments, onDeleteComment]);
 
   const onShowConfirmHandler = () => {
-    setShowConfirmModal(false);
+    setShowConfirmModal((prevState) => !prevState);
   };
 
   const onConfirmDeleteHandler = () => {
@@ -91,7 +95,7 @@ function CommentItem({
               <button
                 className="flex items-center mr-2 transition-all hover:text-rose-600"
                 onClick={() => {
-                  deleteHandler(comment.id);
+                  onShowConfirmHandler();
                 }}
               >
                 <img className="w-4 h-4 mr-1" src={DeleteIcon} alt="reply" />
