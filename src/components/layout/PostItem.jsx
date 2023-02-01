@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { getAuth } from "firebase/auth";
-import { doc, deleteDoc } from "firebase/firestore";
+import { doc, deleteDoc, updateDoc } from "firebase/firestore";
 import { db } from "../../firebase.config";
 import { toast } from "react-toastify";
 import LikeIcon from "../assets/png/like.png";
@@ -26,7 +26,20 @@ function PostItem({
   const [editContentValue, setEditContentValue] = useState(null);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [deletePostItem, setDeletePostItem] = useState(false);
+  const [isLiked, setIsLiked] = useState(false);
+  const [likeCounter, setLikeCounter] = useState(post.data.likes);
+  const [likedById, setLikedById] = useState(post.data.likedById);
+
   const auth = getAuth();
+
+  useEffect(() => {
+    console.log(likedById.includes(auth.currentUser.uid));
+    if (likedById.includes(auth.currentUser.uid)) {
+      setIsLiked(true);
+    } else {
+      setIsLiked(false);
+    }
+  }, [likedById, auth]);
 
   const onShowConfirmHandler = () => {
     setShowConfirmModal((prevState) => !prevState);
@@ -65,6 +78,31 @@ function PostItem({
     setEditContentValue(editContent);
   };
 
+  const addLikeHandler = (userId) => {
+    setLikeCounter((prevState) => prevState + 1);
+    setLikedById((prevState) => [...prevState, userId]);
+    setIsLiked((prevState) => !prevState);
+  };
+
+  useEffect(() => {
+    const updateLikes = async (postId) => {
+      if (isLiked) {
+        console.log(isLiked);
+        console.log(likeCounter);
+        console.log(postId);
+        try {
+          await updateDoc(doc(db, "posts", postId), {
+            likes: likeCounter,
+            likedById: likedById,
+          });
+        } catch (error) {
+          toast.error("Could not add like.");
+        }
+      }
+    };
+    updateLikes(post.id);
+  }, [isLiked, likeCounter, post.id, likedById]);
+
   return (
     <>
       <li
@@ -79,10 +117,22 @@ function PostItem({
           <span>{post.data.name}</span>
         </div>
         <p className="p-1">{editContentValue ?? post.data.content}</p>
+        {(isLiked || post.data.likes !== 0) && (
+          <span className="text-xs transition-all animate-fadeIn">
+            {`${likeCounter} person likes`}
+          </span>
+        )}
         <div className="flex items-center justify-between border-t-2 p-1">
-          <button className="flex items-center font-bold transition-all hover:text-teal-500">
+          <button
+            className="flex items-center font-bold transition-all hover:text-blue-600"
+            onClick={() => {
+              addLikeHandler(auth.currentUser.uid);
+            }}
+          >
             <img className="w-4 h-4 mr-1" src={LikeIcon} alt="like" />
-            <span>likes</span>
+            <span className={isLiked ? "text-blue-600" : ""}>
+              {isLiked ? "liked" : "like"}
+            </span>
           </button>
           {auth.currentUser.uid === post.data.userId ? (
             <div className="flex ">
@@ -90,7 +140,6 @@ function PostItem({
                 className="flex items-center mr-2 transition-all hover:text-rose-600"
                 onClick={() => {
                   onShowConfirmHandler();
-                  // deleteHandler(post.id);
                 }}
               >
                 <img className="w-4 h-4 mr-1" src={DeleteIcon} alt="reply" />

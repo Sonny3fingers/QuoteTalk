@@ -14,6 +14,7 @@ function CreatePost({ createdPostHandler }) {
   const [postData, setPostData] = useState({
     content: "",
     likes: 0,
+    likedById: [],
     userId: "",
     imgUrl: "",
     name: "",
@@ -36,7 +37,6 @@ function CreatePost({ createdPostHandler }) {
     setPostData((prevState) => ({
       ...prevState,
       content: e.target.value,
-      likes: 0,
     }));
   };
 
