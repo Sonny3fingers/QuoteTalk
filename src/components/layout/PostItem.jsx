@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { getAuth } from "firebase/auth";
 import { doc, deleteDoc, updateDoc } from "firebase/firestore";
 import { db } from "../../firebase.config";
@@ -31,6 +31,9 @@ function PostItem({
   const [likedByUserIds, setLikedByUserIds] = useState(
     post.data.likedByUserIds
   );
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [isShowingExpandButton, setIsShowingExpandButton] = useState(false);
+  const paragraphRef = useRef(null);
 
   const auth = getAuth();
 
@@ -100,6 +103,16 @@ function PostItem({
     updateLikes(post.id);
   }, [isLiked, likeCounter, post.id, likedByUserIds]);
 
+  const showMoreTextHandler = () => {
+    setIsExpanded((prevState) => !prevState);
+  };
+
+  useEffect(() => {
+    if (paragraphRef.current.offsetHeight > 80) {
+      setIsShowingExpandButton(true);
+    }
+  }, []);
+
   return (
     <>
       <li
@@ -113,7 +126,26 @@ function PostItem({
           ></div>
           <span>{post.data.name}</span>
         </div>
-        <p className="p-1">{editContentValue ?? post.data.content}</p>
+        <p
+          ref={paragraphRef}
+          className={
+            !isShowingExpandButton
+              ? "p-1 line-clamp-none"
+              : isExpanded
+              ? "p-1 line-clamp-none"
+              : "p-1 line-clamp-3"
+          }
+        >
+          {editContentValue ?? post.data.content}
+        </p>
+        {isShowingExpandButton && (
+          <span
+            className="self-end cursor-pointer transition-all hover:text-blue-400"
+            onClick={showMoreTextHandler}
+          >
+            {isExpanded ? "see less" : "see more"}
+          </span>
+        )}
         {(isLiked || post.data.likes !== 0) && (
           <span className="text-xs transition-all animate-fadeIn">
             {`${likeCounter} person likes`}

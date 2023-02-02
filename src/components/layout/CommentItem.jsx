@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { getAuth } from "firebase/auth";
 import { doc, deleteDoc, updateDoc } from "firebase/firestore";
 import { db } from "../../firebase.config";
@@ -30,6 +30,9 @@ function CommentItem({
   const [likedByUserIds, setLikedByUserIds] = useState(
     comment.data.likedByUserIds
   );
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [isShowingExpandButton, setIsShowingExpandButton] = useState(false);
+  const paragraphRef = useRef(null);
 
   useEffect(() => {
     if (likedByUserIds.includes(auth.currentUser.uid)) {
@@ -101,6 +104,16 @@ function CommentItem({
     setShowCreateComment(false);
   };
 
+  const showMoreTextHandler = () => {
+    setIsExpanded((prevState) => !prevState);
+  };
+
+  useEffect(() => {
+    if (paragraphRef.current.offsetHeight > 60) {
+      setIsShowingExpandButton(true);
+    }
+  }, []);
+
   return (
     <>
       <li className="w-11/12 flex flex-col bg-white rounded-lg self-end p-2 mb-2 animate-fadeIn">
@@ -116,9 +129,26 @@ function CommentItem({
           ></div>
           <span>{comment.data.name}</span>
         </div>
-        <p className="p-1">
+        <p
+          ref={paragraphRef}
+          className={
+            !isShowingExpandButton
+              ? "p-1 line-clamp-none"
+              : isExpanded
+              ? "p-1 line-clamp-none"
+              : "p-1 line-clamp-2"
+          }
+        >
           {updatedComment ? updatedComment : comment.data.content}
         </p>
+        {isShowingExpandButton && (
+          <span
+            className="self-end cursor-pointer transition-all hover:text-blue-400"
+            onClick={showMoreTextHandler}
+          >
+            {isExpanded ? "see less" : "see more"}
+          </span>
+        )}
         {likeCounter !== 0 && (
           <span className="text-xs transition animate-fadeIn">{`${likeCounter} person likes`}</span>
         )}

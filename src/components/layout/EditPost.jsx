@@ -1,15 +1,12 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import ProfileImg from "../assets/png/profile.png";
 import SmallButton from "../SmallButton";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { serverTimestamp, doc, updateDoc } from "firebase/firestore";
 import { db } from "../../firebase.config";
 import { toast } from "react-toastify";
 import Spinner from "../Spinner";
 
 function EditPost({ post, editHandler }) {
-  const auth = getAuth();
-
   const [loading, setLoading] = useState(false);
 
   const [postData, setPostData] = useState({
