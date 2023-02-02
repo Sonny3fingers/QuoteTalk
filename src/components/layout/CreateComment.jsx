@@ -10,10 +10,11 @@ import Spinner from "../Spinner";
 function CreateComment({ postId, onCloseCommentForm, onCreateCommentHandler }) {
   const auth = getAuth();
 
-  const [loading, setLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [comment, setComment] = useState({
     content: "",
     likes: 0,
+    likedByUserIds: [],
     userId: "",
     postId: postId,
     imgUrl: "",
@@ -43,7 +44,7 @@ function CreateComment({ postId, onCloseCommentForm, onCreateCommentHandler }) {
 
   const onSubmitHandler = async (e) => {
     e.preventDefault();
-    setLoading(true);
+    setIsLoading(true);
 
     const formData = { ...comment, timestamp: serverTimestamp() };
 
@@ -51,7 +52,7 @@ function CreateComment({ postId, onCloseCommentForm, onCreateCommentHandler }) {
       await addDoc(collection(db, "comments"), formData);
 
       toast.success("Comment created.");
-      setLoading(false);
+      setIsLoading(false);
       setComment((prevState) => ({
         ...prevState,
         content: "",
@@ -60,7 +61,7 @@ function CreateComment({ postId, onCloseCommentForm, onCreateCommentHandler }) {
       onCreateCommentHandler(comment);
     } catch (error) {
       toast.error("Could not create a comment");
-      setLoading(false);
+      setIsLoading(false);
       setComment((prevState) => ({
         ...prevState,
         content: "",
@@ -68,7 +69,7 @@ function CreateComment({ postId, onCloseCommentForm, onCreateCommentHandler }) {
     }
   };
 
-  if (loading) {
+  if (isLoading) {
     return <Spinner />;
   }
 

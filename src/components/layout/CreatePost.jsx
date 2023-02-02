@@ -14,7 +14,7 @@ function CreatePost({ createdPostHandler }) {
   const [postData, setPostData] = useState({
     content: "",
     likes: 0,
-    likedById: [],
+    likedByUserIds: [],
     userId: "",
     imgUrl: "",
     name: "",

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { getAuth } from "firebase/auth";
-import { doc, deleteDoc } from "firebase/firestore";
+import { doc, deleteDoc, updateDoc } from "firebase/firestore";
 import { db } from "../../firebase.config";
 import { toast } from "react-toastify";
 import blancProfilePhoto from "../assets/png/profile.png";
@@ -25,6 +25,40 @@ function CommentItem({
   const [updatedComment, setUpdatedComment] = useState(null);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [deleteCommentItem, setDeleteCommentItem] = useState(false);
+  const [isLiked, setIsLiked] = useState(false);
+  const [likeCounter, setLikeCounter] = useState(comment.data.likes);
+  const [likedByUserIds, setLikedByUserIds] = useState(
+    comment.data.likedByUserIds
+  );
+
+  useEffect(() => {
+    if (likedByUserIds.includes(auth.currentUser.uid)) {
+      setIsLiked(true);
+    } else {
+      setIsLiked(false);
+    }
+  }, [likedByUserIds, auth]);
+
+  const addLikeHandler = (userId) => {
+    setLikeCounter((prevState) => prevState + 1);
+    setLikedByUserIds([...likedByUserIds, userId]);
+  };
+
+  useEffect(() => {
+    const updateLikes = async (commentId) => {
+      if (isLiked) {
+        try {
+          await updateDoc(doc(db, "comments", commentId), {
+            likes: likeCounter,
+            likedByUserIds: likedByUserIds,
+          });
+        } catch (error) {
+          toast.error("Could not add like.");
+        }
+      }
+    };
+    updateLikes(comment.id);
+  }, [isLiked, likedByUserIds, comment.id, likeCounter]);
 
   useEffect(() => {
     if (deleteCommentItem) {
@@ -85,10 +119,21 @@ function CommentItem({
         <p className="p-1">
           {updatedComment ? updatedComment : comment.data.content}
         </p>
+        {likeCounter !== 0 && (
+          <span className="text-xs transition animate-fadeIn">{`${likeCounter} person likes`}</span>
+        )}
         <div className="flex items-center justify-between border-t-2 p-1">
-          <button className="flex items-center font-bold transition-all hover:text-teal-600">
+          <button
+            className="flex items-center font-bold transition-all hover:text-blue-600"
+            onClick={() => {
+              addLikeHandler(auth.currentUser.uid);
+            }}
+            disabled={isLiked ? true : false}
+          >
             <img className="w-4 h-4 mr-1" src={LikeIcon} alt="like" />
-            <span>likes</span>
+            <span className={isLiked ? "text-blue-600" : ""}>
+              {isLiked ? "liked" : "like"}
+            </span>
           </button>
           {auth.currentUser.uid === comment.data.userId ? (
             <div className="flex ">

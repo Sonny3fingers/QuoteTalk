@@ -22,24 +22,25 @@ function PostItem({
   createdPost,
 }) {
   const [showCommentForm, setShowCommentForm] = useState(false);
-  const [editPostForm, setEditPostForm] = useState(false);
+  const [showEditPostForm, setShowEditPostForm] = useState(false);
   const [editContentValue, setEditContentValue] = useState(null);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [deletePostItem, setDeletePostItem] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
   const [likeCounter, setLikeCounter] = useState(post.data.likes);
-  const [likedById, setLikedById] = useState(post.data.likedById);
+  const [likedByUserIds, setLikedByUserIds] = useState(
+    post.data.likedByUserIds
+  );
 
   const auth = getAuth();
 
   useEffect(() => {
-    console.log(likedById.includes(auth.currentUser.uid));
-    if (likedById.includes(auth.currentUser.uid)) {
+    if (likedByUserIds.includes(auth.currentUser.uid)) {
       setIsLiked(true);
     } else {
       setIsLiked(false);
     }
-  }, [likedById, auth]);
+  }, [likedByUserIds, auth]);
 
   const onShowConfirmHandler = () => {
     setShowConfirmModal((prevState) => !prevState);
@@ -74,26 +75,22 @@ function PostItem({
   }, [deletePostItem, post.id, onDeletePost, posts]);
 
   const editHandler = (editContent) => {
-    setEditPostForm((prevState) => !prevState);
+    setShowEditPostForm((prevState) => !prevState);
     setEditContentValue(editContent);
   };
 
   const addLikeHandler = (userId) => {
     setLikeCounter((prevState) => prevState + 1);
-    setLikedById((prevState) => [...prevState, userId]);
-    setIsLiked((prevState) => !prevState);
+    setLikedByUserIds([...likedByUserIds, userId]);
   };
 
   useEffect(() => {
     const updateLikes = async (postId) => {
       if (isLiked) {
-        console.log(isLiked);
-        console.log(likeCounter);
-        console.log(postId);
         try {
           await updateDoc(doc(db, "posts", postId), {
             likes: likeCounter,
-            likedById: likedById,
+            likedByUserIds: likedByUserIds,
           });
         } catch (error) {
           toast.error("Could not add like.");
@@ -101,7 +98,7 @@ function PostItem({
       }
     };
     updateLikes(post.id);
-  }, [isLiked, likeCounter, post.id, likedById]);
+  }, [isLiked, likeCounter, post.id, likedByUserIds]);
 
   return (
     <>
@@ -128,6 +125,7 @@ function PostItem({
             onClick={() => {
               addLikeHandler(auth.currentUser.uid);
             }}
+            disabled={isLiked ? true : false}
           >
             <img className="w-4 h-4 mr-1" src={LikeIcon} alt="like" />
             <span className={isLiked ? "text-blue-600" : ""}>
@@ -152,7 +150,7 @@ function PostItem({
                 }}
               >
                 <img className="w-4 h-4 mr-1" src={EditIcon} alt="reply" />
-                <span>{!editPostForm ? "edit" : "cancel"}</span>
+                <span>{!showEditPostForm ? "edit" : "cancel"}</span>
               </button>
             </div>
           ) : (
@@ -179,7 +177,7 @@ function PostItem({
           onCreateCommentHandler={onCreateCommentHandler}
         />
       )}
-      {editPostForm && <EditPost post={post} editHandler={editHandler} />}
+      {showEditPostForm && <EditPost post={post} editHandler={editHandler} />}
 
       <ul className="w-full flex flex-col">
         {comments.map((comment) =>

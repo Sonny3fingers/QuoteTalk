@@ -12,7 +12,7 @@ function ConfirmModal({ onShowConfirmHandler, onConfirmDeleteHandler }) {
 
   return (
     <div className="fixed bottom-0 left-0 w-full h-full flex justify-center items-center backdrop-blur-lg backdrop-opacity-90 transition animate-fadeInFaster">
-      <div className="bg-white p-10 m-2 border-4 rounded-lg">
+      <div className="bg-white p-10 m-2 border-2 rounded-lg">
         <p className="text-2xl mb-12 text-center">
           Are you sure you want to delete?
         </p>
@@ -24,7 +24,7 @@ function ConfirmModal({ onShowConfirmHandler, onConfirmDeleteHandler }) {
             Delete
           </button>
           <button
-            className="bg-white px-4 py-1 border-2 border-teal-400 rounded-full text-xl transition-all easy-out duration-500 hover:bg-teal-400"
+            className="bg-white px-4 py-1 border-2 border-teal-400 rounded-full text-xl transition-all easy-out duration-500 hover:bg-teal-200"
             onClick={onCancelHandler}
           >
             Cancel

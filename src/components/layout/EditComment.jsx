@@ -1,25 +1,17 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import ProfileImg from "../assets/png/profile.png";
 import SmallButton from "../SmallButton";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
-import {
-  addDoc,
-  collection,
-  serverTimestamp,
-  doc,
-  updateDoc,
-} from "firebase/firestore";
+import { serverTimestamp, doc, updateDoc } from "firebase/firestore";
 import { db } from "../../firebase.config";
 import { toast } from "react-toastify";
 import Spinner from "../Spinner";
 
 function EditComment({ commentData, editCommentHandler }) {
-  const auth = getAuth();
-
   const [loading, setLoading] = useState(false);
   const [comment, setComment] = useState({
     content: commentData.data.content,
     likes: commentData.data.likes,
+    likedByUserIds: commentData.data.likedByUserIds,
     userId: commentData.data.userId,
     postId: commentData.data.postId,
     imgUrl: commentData.data.imgUrl,
