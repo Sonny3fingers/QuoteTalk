@@ -72,13 +72,13 @@ function CreatePost({ createdPostHandler }) {
   }
 
   return (
-    <div className="w-full flex items-center bg-white p-5 mt-5 mb-5 rounded-lg max-[390px]:flex-col">
+    <div className="w-full flex items-center bg-white p-5 mt-5 mb-5 rounded-lg max-[420px]:flex-col">
       <div
         className="w-16 h-16 rounded-full p-2 m-2 border-2 bg-center bg-cover bg-no-repeat"
         style={{ backgroundImage: `url(${postData.imgUrl || ProfileImg})` }}
       ></div>
       <form
-        className="w-full flex grow h-20 max-[390px]:flex-col max-[390px]:h-32"
+        className="w-full flex grow h-20 max-[420px]:flex-col max-[420px]:h-32"
         onSubmit={onSubmitHandler}
       >
         <textarea

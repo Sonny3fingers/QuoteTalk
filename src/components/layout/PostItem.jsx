@@ -19,7 +19,6 @@ function PostItem({
   onDeletePost,
   onDeleteComment,
   onCreateCommentHandler,
-  createdPost,
 }) {
   const [showCommentForm, setShowCommentForm] = useState(false);
   const [showEditPostForm, setShowEditPostForm] = useState(false);

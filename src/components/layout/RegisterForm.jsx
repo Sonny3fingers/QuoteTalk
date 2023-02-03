@@ -59,7 +59,7 @@ function RegisterForm() {
   };
 
   return (
-    <main className="w-full shadow px-2 py-5 bg-white">
+    <main className="w-full shadow px-2 py-5 bg-white transition animate-fadeInFaster">
       <h2 className="text-2xl font-normal text-gray-800">Register</h2>
       <form className="mb-4" onSubmit={onSubmitHandler}>
         <div className="py-4">

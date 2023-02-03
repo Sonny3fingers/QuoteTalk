@@ -1,5 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { collection, query, getDocs, orderBy, limit } from "firebase/firestore";
+import {
+  collection,
+  query,
+  getDocs,
+  orderBy,
+  limit,
+  startAfter,
+} from "firebase/firestore";
 import { db } from "../../firebase.config";
 import { toast } from "react-toastify";
 import Spinner from "../Spinner";
@@ -9,7 +16,8 @@ function PostList({ createdPost }) {
   const [posts, setPosts] = useState(null);
   const [comments, setComments] = useState(null);
   const [createdComment, setCreatedComment] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
+  const [lastFetchedPost, setLastFetchedPost] = useState(null);
 
   const onCreateCommentHandler = (newComment) => {
     setTimeout(() => {
@@ -20,44 +28,94 @@ function PostList({ createdPost }) {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const q = query(
+        const queryPosts = query(
           collection(db, "posts"),
           orderBy("timestamp", "desc"),
-          limit(8)
+          limit(5)
         );
-        const q2 = query(
+        const queryComments = query(
           collection(db, "comments"),
           orderBy("timestamp", "asc")
           // limit(10)
         );
-        const getPosts = async () => {
-          const querySnapshot = await getDocs(q);
-          const querySnapshot2 = await getDocs(q2);
-          const postsArray = [];
-          const commentsArray = [];
-          querySnapshot.forEach((doc) => {
-            return postsArray.push({
-              id: doc.id,
-              data: doc.data(),
-            });
+
+        const querySnapshotPosts = await getDocs(queryPosts);
+
+        const lastVisiblePost =
+          querySnapshotPosts.docs[querySnapshotPosts.docs.length - 1];
+
+        setLastFetchedPost(lastVisiblePost);
+
+        const querySnapshotComments = await getDocs(queryComments);
+        const postsArray = [];
+        const commentsArray = [];
+        querySnapshotPosts.forEach((doc) => {
+          return postsArray.push({
+            id: doc.id,
+            data: doc.data(),
           });
-          querySnapshot2.forEach((doc) => {
-            return commentsArray.push({
-              id: doc.id,
-              data: doc.data(),
-            });
+        });
+        querySnapshotComments.forEach((doc) => {
+          return commentsArray.push({
+            id: doc.id,
+            data: doc.data(),
           });
-          setPosts(postsArray);
-          setComments(commentsArray);
-          setLoading(false);
-        };
-        getPosts();
+        });
+        setPosts(postsArray);
+        setComments(commentsArray);
+        setIsLoading(false);
       } catch (error) {
         toast.error("Could not fetch data.");
+        setIsLoading(false);
       }
     };
     fetchData();
   }, [createdPost, createdComment]);
+
+  // Fetch More Posts
+  const onFetchMorePosts = async () => {
+    try {
+      const queryPosts = query(
+        collection(db, "posts"),
+        orderBy("timestamp", "desc"),
+        startAfter(lastFetchedPost),
+        limit(5)
+      );
+      const queryComments = query(
+        collection(db, "comments"),
+        orderBy("timestamp", "asc")
+        // limit(10)
+      );
+
+      const querySnapshotPosts = await getDocs(queryPosts);
+
+      const lastVisiblePost =
+        querySnapshotPosts.docs[querySnapshotPosts.docs.length - 1];
+
+      setLastFetchedPost(lastVisiblePost);
+
+      const querySnapshotComments = await getDocs(queryComments);
+      const postsArray = [];
+      const commentsArray = [];
+      querySnapshotPosts.forEach((doc) => {
+        return postsArray.push({
+          id: doc.id,
+          data: doc.data(),
+        });
+      });
+      querySnapshotComments.forEach((doc) => {
+        return commentsArray.push({
+          id: doc.id,
+          data: doc.data(),
+        });
+      });
+      setPosts((prevState) => [...prevState, ...postsArray]);
+      setComments(commentsArray);
+      setIsLoading(false);
+    } catch (error) {
+      toast.error("Could not fetch data.");
+    }
+  };
 
   const onDeletePost = (updatedPosts) => {
     setPosts(updatedPosts);
@@ -68,13 +126,16 @@ function PostList({ createdPost }) {
   };
 
   return (
-    <div className="bg-gray-100 w-fit px-4 pb-6" style={{ width: "107%" }}>
+    <div
+      className="bg-gray-100 w-fit px-4 pb-6 flex flex-col"
+      style={{ width: "107%" }}
+    >
       <h3>Feed:</h3>
-      {loading ? (
+      {isLoading ? (
         <Spinner />
       ) : posts && posts.length > 0 ? (
         <>
-          <main>
+          <main className="mb-5">
             <ul>
               {posts.map((post) => (
                 <PostItem
@@ -89,6 +150,14 @@ function PostList({ createdPost }) {
               ))}
             </ul>
           </main>
+          {lastFetchedPost && (
+            <button
+              className="w-auto bg-teal-500 p-1 ml-2 mt-2 mb-5 border-0 rounded-lg text-normal text-white transition-all hover:bg-teal-600"
+              onClick={onFetchMorePosts}
+            >
+              Load More
+            </button>
+          )}
         </>
       ) : (
         <p>No posts.</p>

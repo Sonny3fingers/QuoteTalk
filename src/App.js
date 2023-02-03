@@ -9,7 +9,7 @@ import PrivateRoute from "./components/PrivateRoute";
 
 function App() {
   return (
-    <div className="max-w-lg h-screen flex flex-col items-center bg-gray-100 text-gray-600 m-auto px-4">
+    <div className="max-w-lg h-screen flex flex-col items-center bg-gray-100 text-gray-600 m-auto px-4 transition animate-fadeInFaster">
       <Router>
         <Routes>
           <Route path="/" element={<Login />} />
