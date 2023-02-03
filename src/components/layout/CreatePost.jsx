@@ -42,28 +42,32 @@ function CreatePost({ createdPostHandler }) {
 
   const onSubmitHandler = async (e) => {
     e.preventDefault();
-    const formData = {
-      ...postData,
-      timestamp: serverTimestamp(),
-    };
-    setLoading(true);
-    try {
-      await addDoc(collection(db, "posts"), formData);
+    if (postData.content.trim() !== "") {
+      const formData = {
+        ...postData,
+        timestamp: serverTimestamp(),
+      };
+      setLoading(true);
+      try {
+        await addDoc(collection(db, "posts"), formData);
 
-      toast.success("Created post.");
-      setLoading(false);
-      setPostData((prevState) => ({
-        ...prevState,
-        content: "",
-      }));
-      createdPostHandler(postData);
-    } catch (error) {
-      toast.error("Could not create post data.");
-      setLoading(false);
-      setPostData((prevState) => ({
-        ...prevState,
-        content: "",
-      }));
+        toast.success("Created post.");
+        setLoading(false);
+        setPostData((prevState) => ({
+          ...prevState,
+          content: "",
+        }));
+        createdPostHandler(postData);
+      } catch (error) {
+        toast.error("Could not create post data.");
+        setLoading(false);
+        setPostData((prevState) => ({
+          ...prevState,
+          content: "",
+        }));
+      }
+    } else {
+      toast.error("Can not submit empty post.");
     }
   };
 
