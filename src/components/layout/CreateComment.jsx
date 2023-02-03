@@ -44,28 +44,32 @@ function CreateComment({ postId, onCloseCommentForm, onCreateCommentHandler }) {
 
   const onSubmitHandler = async (e) => {
     e.preventDefault();
-    setIsLoading(true);
+    if (comment.content.trim() !== "") {
+      setIsLoading(true);
 
-    const formData = { ...comment, timestamp: serverTimestamp() };
+      const formData = { ...comment, timestamp: serverTimestamp() };
 
-    try {
-      await addDoc(collection(db, "comments"), formData);
+      try {
+        await addDoc(collection(db, "comments"), formData);
 
-      toast.success("Comment created.");
-      setIsLoading(false);
-      setComment((prevState) => ({
-        ...prevState,
-        content: "",
-      }));
-      onCloseCommentForm();
-      onCreateCommentHandler(comment);
-    } catch (error) {
-      toast.error("Could not create a comment");
-      setIsLoading(false);
-      setComment((prevState) => ({
-        ...prevState,
-        content: "",
-      }));
+        toast.success("Comment created.");
+        setIsLoading(false);
+        setComment((prevState) => ({
+          ...prevState,
+          content: "",
+        }));
+        onCloseCommentForm();
+        onCreateCommentHandler(comment);
+      } catch (error) {
+        toast.error("Could not create a comment");
+        setIsLoading(false);
+        setComment((prevState) => ({
+          ...prevState,
+          content: "",
+        }));
+      }
+    } else {
+      toast.error("Can not submit empty comment.");
     }
   };
 
